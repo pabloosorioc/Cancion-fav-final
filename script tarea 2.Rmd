@@ -1,0 +1,74 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# Librerías
+
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(factoextra)
+```
+
+Luego de intentar hacerlo con Spotifyr y que no funcionara, recurrí a una página llamada exportify para obtener los datos de la playlist.
+
+```{r}
+df_playlist <- read_csv("data/datos_playlist.csv")
+
+```
+
+# Estandarización y selección
+
+En mi caso, es necesario estandarizar para que las variables más grandes no tengan más peso en el análisis. 
+
+```{r}
+df_playlist_est <- df_playlist |> 
+  select(Danceability, Energy, Valence, Tempo, Acousticness, Instrumentalness, Loudness) #selección de variables
+
+res_pca <- prcomp(df_playlist_est, scale. = TRUE)
+
+fviz_eig(res_pca, addlabels = TRUE) # Esto me muestra que con 2 componentes principales ya explican la varianza.
+
+```
+
+# Mapas de canción fav biplot
+
+```{r}
+fviz_pca_biplot(res_pca,
+                repel = TRUE,
+                col.var = "red",
+                col.ind = "gray",
+                geom = "point",
+                alpha.ind = 0.6)
+```
+
+conclusiones rápidas: mi canción fav no es acústica, tiene alta energía y volumne. Tiende a un valence positivo (alegre) y es bailable. No necesariamente tiene un tempo rápido, pero si mucha fuerza.
+
+# Sigamos complejizando
+
+```{r}
+fviz_pca_biplot(res_pca,
+                repel = TRUE,
+                geom = c("point", "text"),
+                select.ind = list(contrib = 20),
+                col.var = "red",
+                col.ind = "blue",
+                alpha.ind = 0.6)
+```
+
+Raro igual, tenemos los números en el que están posicionados en la base, así que voy a hacer una lista para ver cuales son
+
+```{r}
+canciones_20 <- c(134, 207, # alegres/bailables
+                  63, 88, 198, 2, 9, 71, #rapidas/intensas
+                  142, 186, 92, 4, 158, 114, 89, 93, 182, 187, #acusticas/relajadas
+                  101, 175) #melancólicas/lentas 
+
+
+lista_cancion <- df_playlist[canciones_20,] |> 
+  select(`Track Name`, `Artist Name(s)`, Energy, Valence, Tempo, Acousticness)
+
+print(lista_cancion)
+```
+
