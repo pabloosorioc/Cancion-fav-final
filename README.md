@@ -61,11 +61,11 @@ Existe un caso particular que es una canción ubicada en el cuadrante 1 de alto 
 
 Así, estas serían las 20 canciones más representativas de cada cuadrante:
 
-<img width="748" height="623" alt="tabla_rep_cuadrante" src="https://github.com/user-attachments/assets/9a2f2546-4a49-4d1c-b700-4a04673417e7" />
+<img width="957" height="723" alt="image" src="https://github.com/user-attachments/assets/586cf1b6-1c32-45f0-8a24-f9d0331b5f03" />
 
-Finalmente, dejo una tabla dinámica para ver en que cuadrante se encuentra cada canción:
+Finalmente, dejo una tabla dinámica para ver en que cuadrante se encuentra cada canción (se encuentra en la carpeta de output, pero dejo un preview):
 
-file:///C:/Users/pablo/OneDrive/Desktop/Universidad/Ciencia%20Pol%C3%ADtica/10mo%20semestre/Medicion%20y%20An%C3%A1lisis%20Dimensional%20de%20Datos%20Pol%C3%ADticos/Labs/Cancion-fav-final/output/tabla_interactiva.html
+<img width="1873" height="855" alt="image" src="https://github.com/user-attachments/assets/c4aca36a-ba97-4423-a2c5-d2e4aa709050" />
 
 # Conclusiones finales
 
