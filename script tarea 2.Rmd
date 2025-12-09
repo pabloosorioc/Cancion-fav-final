@@ -1,14 +1,12 @@
----
-output: html_document
-editor_options: 
-  chunk_output_type: console
----
+
 # Librerías
 
 ```{r}
 library(tidyverse)
 library(spotifyr)
 library(factoextra)
+library(kableExtra)
+library(DT)
 ```
 
 Luego de intentar hacerlo con Spotifyr y que no funcionara, recurrí a una página llamada exportify para obtener los datos de la playlist.
@@ -65,10 +63,61 @@ canciones_20 <- c(134, 207, # alegres/bailables
                   142, 186, 92, 4, 158, 114, 89, 93, 182, 187, #acusticas/relajadas
                   101, 175) #melancólicas/lentas 
 
-
 lista_cancion <- df_playlist[canciones_20,] |> 
   select(`Track Name`, `Artist Name(s)`, Energy, Valence, Tempo, Acousticness)
 
 print(lista_cancion)
+
+lista_cancion |> 
+  kable(format = "html", caption = "Canciones más representativas por cuadrante") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
+
+# Tabla final ordenada por cuadrantes
+```{r}
+coords <- data.frame(res_pca$x) |> 
+  rownames_to_column(var = "Track Name") |> 
+  select(`Track Name`, PC1, PC2)
+
+info_sectores <- coords |> 
+  mutate(
+    Sector = case_when(
+      PC1 > 0 & PC2 > 0 ~ "↗️ Cuadrante 1: Energético y Feliz/Bailable",
+      PC1 < 0 & PC2 > 0 ~ "↖️ Cuadrante 2: Acústico pero Alegre",
+      PC1 < 0 & PC2 < 0 ~ "↙️ Cuadrante 3: Acústico y Melancólico/Chill",
+      PC1 > 0 & PC2 < 0 ~ "↘️ Cuadrante 4: Intenso y Serio/Rápido"
+    )
+  )
+
+write_csv(info_sectores, "data/info_sectores.csv")
+
+info_final <- info_sectores |> 
+  mutate(
+    Cancion = df_playlist$`Track Name`,
+    Artista = df_playlist$`Artist Name(s)`
+  ) |> 
+  select(Cancion, Artista, Sector, PC1, PC2)
+
+datatable(info_final,
+          caption = "Mapa Sectores Musicales: Completo",
+          rownames = FALSE,
+          options = list(pageLength = 10, autoWidth = TRUE))
+```
+# Conclusiones finales
+
+Las canciones con alta energía (cuadrante inferior derecho), muestran una preferenica por el pop-punk y metalcore. Las canciones del lado chill (inferior izquierdo) muestran un lado completamente distinto, tirado a las baladas.
+
+Hay un outlier que es equilibrio, no agresiva, bailable y con valence positivo.
+
+En general, mi playlist tiene una preferencia por canciones alegres y bailable, pero con un gusto por las baladas y canciones acústicas.
+
+Todo esto se puede resumir en:
+
+Canción fav energía: All I Want de A Day To Remember
+Canción fav sentimiento: Fear Of Water de Noah Kahan
+Canción outlier: On Melancholy Hill de Gorillaz
+
+
+
+
 
